@@ -5,11 +5,10 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 const DB_FILE = path.join(__dirname, 'database.json');
 
 // Middleware
-app.use(cors()); // Tillater at frontend appen din snakker med denne serveren
+app.use(cors());
 app.use(bodyParser.json());
 
 // Hjelpefunksjon for å lese data
@@ -42,15 +41,13 @@ app.get('/bookings', (req, res) => {
 app.post('/bookings', (req, res) => {
     try {
         const newBooking = req.body;
-        
-        // Enkel validering
+
         if (!newBooking.date || !newBooking.userName) {
             return res.status(400).json({ error: 'Mangler nødvendig data' });
         }
 
         const bookings = readData();
-        
-        // Generer en ID hvis den mangler (frontend gjør dette ofte, men trygt å ha her)
+
         if (!newBooking.id) {
             newBooking.id = Math.random().toString(36).substring(7);
         }
@@ -64,7 +61,7 @@ app.post('/bookings', (req, res) => {
     }
 });
 
-// Start serveren
-app.listen(PORT, () => {
-    console.log(`Server kjører på port ${PORT}`);
-});
+// ❗ VIKTIG: Ikke app.listen her!
+// Firebase starter serveren for oss
+
+module.exports = app;
